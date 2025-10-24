@@ -7,50 +7,51 @@ import java.awt.*;
 import java.sql.*;
 
 public class ManagePatientsPanel extends JPanel {
-
-    private Dashboard dashboard;
+    private static final long serialVersionUID = 1L;
     private JTable patientTable;
+    private Dashboard dashboard;
     private DefaultTableModel model;
 
     public ManagePatientsPanel(Dashboard dashboard) {
         this.dashboard = dashboard;
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout()); // 🔥 makes it fill parent panel automatically
 
-        
+        // === Table section ===
+        patientTable = new JTable();
         model = new DefaultTableModel(new String[]{
                 "ID", "First Name", "Last Name", "Gender", "DOB",
                 "Blood Group", "Phone", "Email", "Address"
         }, 0);
-
-       
-        patientTable = new JTable(model);
+        patientTable.setModel(model);
         patientTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         JScrollPane scrollPane = new JScrollPane(patientTable);
+        add(scrollPane, BorderLayout.CENTER); // fills the main area
 
-        JButton refreshBtn = new JButton("🔄 Refresh");
-        JButton deleteBtn = new JButton("🗑️ Delete Selected");
-        JButton editBtn = new JButton("✏️ Edit Selected");
-        JButton addBtn = new JButton("➕ Add New Patient");
+        // === Button panel (bottom) ===
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        buttonPanel.setBackground(new Color(192, 211, 255));
+        add(buttonPanel, BorderLayout.SOUTH);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        btnPanel.add(refreshBtn);
-        btnPanel.add(deleteBtn);
-        btnPanel.add(editBtn);
-        btnPanel.add(addBtn);
+        JButton btnRefresh = new JButton("🔄 Refresh");
+        JButton btnEdit = new JButton("✏️ Edit Selected");
+        JButton btnAdd = new JButton("➕ Add New Patient");
+        JButton btnDelete = new JButton("🗑️ Delete Selected");
 
-        add(scrollPane, BorderLayout.CENTER);
-        add(btnPanel, BorderLayout.SOUTH);
+        buttonPanel.add(btnRefresh);
+        buttonPanel.add(btnEdit);
+        buttonPanel.add(btnAdd);
+        buttonPanel.add(btnDelete);
 
-        refreshBtn.addActionListener(e -> loadPatients());
-        deleteBtn.addActionListener(e -> deleteSelectedPatient());
-        editBtn.addActionListener(e -> editSelectedPatient());
-        addBtn.addActionListener(e -> dashboard.switchPanel("AddPatient"));
+        // === Button logic ===
+        btnRefresh.addActionListener(e -> loadPatients());
+        btnEdit.addActionListener(e -> editSelectedPatient());
+        btnAdd.addActionListener(e -> addPatient());
+        btnDelete.addActionListener(e -> deleteSelectedPatient());
 
-        loadPatients();
+        loadPatients(); // initial load
     }
 
- 
     private void loadPatients() {
         model.setRowCount(0);
         ResultSet rs = PatientController.getAllPatients();
@@ -69,7 +70,6 @@ public class ManagePatientsPanel extends JPanel {
                 });
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error loading patients!");
         }
     }
@@ -82,19 +82,25 @@ public class ManagePatientsPanel extends JPanel {
         }
 
         int id = (int) model.getValueAt(selectedRow, 0);
+        String firstName = model.getValueAt(selectedRow, 1).toString();
+        String lastName = model.getValueAt(selectedRow, 2).toString();
+        String gender = model.getValueAt(selectedRow, 3).toString();
+        String dob = model.getValueAt(selectedRow, 4).toString();
+        String blood = model.getValueAt(selectedRow, 5).toString();
+        String phone = model.getValueAt(selectedRow, 6).toString();
+        String email = model.getValueAt(selectedRow, 7).toString();
+        String address = model.getValueAt(selectedRow, 8).toString();
 
-        dashboard.showEditPatientPanel(
-                id,
-                (String) model.getValueAt(selectedRow, 1),
-                (String) model.getValueAt(selectedRow, 2),
-                (String) model.getValueAt(selectedRow, 3),
-                model.getValueAt(selectedRow, 4).toString(),
-                (String) model.getValueAt(selectedRow, 5),
-                (String) model.getValueAt(selectedRow, 6),
-                (String) model.getValueAt(selectedRow, 7),
-                (String) model.getValueAt(selectedRow, 8)
-        );
+        // Open the EditPatientPanel with this data
+        dashboard.showEditPatientPanel(id, firstName, lastName, gender, dob, blood, phone, email, address);
     }
+    private void addPatient() {
+        // This is where you handle the "Add" button logic.
+        // For now, let's just open the AddPatient form through the Dashboard.
+        dashboard.switchPanel("AddPatient");
+    }
+
+    
 
     private void deleteSelectedPatient() {
         int selectedRow = patientTable.getSelectedRow();
