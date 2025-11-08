@@ -100,11 +100,10 @@ public class Dashboard extends JFrame {
         panel_1.add(managePatientsPanel, "Patients");
         panel_1.add(new AddPatientPanel(this), "AddPatient");
 
-        JPanel doctorsPanel = new JPanel();
-        doctorsPanel.setBackground(Color.WHITE);
-        doctorsPanel.add(new JLabel("Doctors Panel"));
-        panel_1.add(doctorsPanel, "Doctors");
-
+        ManageDoctorsPanel manageDoctorsPanel = new ManageDoctorsPanel(this);
+        panel_1.add(manageDoctorsPanel, "Doctors");
+        panel_1.add(new AddDoctorPanel(this), "AddDoctor");
+        
         JPanel reportsPanel = new JPanel();
         reportsPanel.setBackground(Color.WHITE);
         reportsPanel.add(new JLabel("Reports Panel"));
@@ -143,6 +142,16 @@ public class Dashboard extends JFrame {
 	
 	panel_1.add(editPanel, "EditPatient"); // add it as a new card
 		switchPanel("EditPatient");            // switch to the edit panel
+	}
+
+	public void showEditDoctorPanel(int id, String firstName, String lastName, String gender, String address,
+			String dob, String phone, String specialty, String qualification, String schedule, String timeslot) {
+		// Create the EditDoctorPanel and add it to the CardLayout
+				EditDoctorPanel editPanel = new EditDoctorPanel(
+				this, id, firstName, lastName, gender, address, dob, phone, specialty, qualification, schedule, timeslot
+			);
+	panel_1.add(editPanel, "EditDoctor"); // add it as a new card
+		switchPanel("EditDoctor");            // switch to the edit panel
 	}
 
 }
