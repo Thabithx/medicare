@@ -6,14 +6,20 @@ import java.sql.SQLException;
 
 public class Connectdb {
 
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/medicare";
+    private static final String URL = "jdbc:mysql://localhost:3307/medicare?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
-    private static final String PASSWORD = "thabith";
+    private static final String PASSWORD = "";
 
     public static Connection getConnection() {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (ClassNotFoundException e) {
+            System.err.println("MySQL JDBC Driver not found! Check your CLASSPATH.");
+            e.printStackTrace();
+            return null;
         } catch (SQLException e) {
+            System.err.println("Database connection failed!");
             e.printStackTrace();
             return null;
         }

@@ -3,79 +3,155 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import controller.PatientController;
+import model.Patient;
 import java.awt.*;
-import java.sql.*;
+import java.util.List;
+import javax.swing.table.TableRowSorter;
+import javax.swing.RowFilter;
+import view.style.Theme;
 
 public class ManagePatientsPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private JTable patientTable;
-    private Dashboard dashboard;
+    private JTable table;
     private DefaultTableModel model;
+    private Dashboard dashboard;
+
+    public ManagePatientsPanel() {
+        this(null);
+    }
 
     public ManagePatientsPanel(Dashboard dashboard) {
         this.dashboard = dashboard;
-        setLayout(new BorderLayout()); // 🔥 makes it fill parent panel automatically
+        setLayout(new BorderLayout());
+        setBackground(Theme.BG_COLOR);
+        setBorder(Theme.createPadding(20));
 
-        // === Table section ===
-        patientTable = new JTable();
-        model = new DefaultTableModel(new String[]{
-                "ID", "First Name", "Last Name", "Gender", "DOB",
-                "Blood Group", "Phone", "Email", "Address"
-        }, 0);
-        patientTable.setModel(model);
-        patientTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Header
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Theme.BG_COLOR);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
 
-        JScrollPane scrollPane = new JScrollPane(patientTable);
-        add(scrollPane, BorderLayout.CENTER); // fills the main area
+        JLabel lblTitle = Theme.createTitleLabel("Manage Patients");
+        headerPanel.add(lblTitle, BorderLayout.WEST);
 
-        // === Button panel (bottom) ===
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(new Color(192, 211, 255));
-        add(buttonPanel, BorderLayout.SOUTH);
+        // Search Bar
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        searchPanel.setBackground(Theme.BG_COLOR);
+        JTextField searchField = Theme.createPlaceholderTextField(20, "Search by Name...");
+        searchField.setPreferredSize(new Dimension(250, 35));
 
-        JButton btnRefresh = new JButton("🔄 Refresh");
-        JButton btnEdit = new JButton("✏️ Edit Selected");
-        JButton btnAdd = new JButton("➕ Add New Patient");
-        JButton btnDelete = new JButton("🗑️ Delete Selected");
+        JButton btnSearch = Theme.createGradientButton("Search");
+        btnSearch.setPreferredSize(new Dimension(100, 35));
 
-        buttonPanel.add(btnRefresh);
-        buttonPanel.add(btnEdit);
-        buttonPanel.add(btnAdd);
-        buttonPanel.add(btnDelete);
+        searchPanel.add(new JLabel("Search: "));
+        searchPanel.add(searchField);
+        searchPanel.add(btnSearch);
+        headerPanel.add(searchPanel, BorderLayout.EAST);
 
-        // === Button logic ===
+        add(headerPanel, BorderLayout.NORTH);
+
+        // Table
+        String[] columns = { "ID", "First Name", "Last Name", "Gender", "DOB", "Blood Group", "Phone", "Email",
+                "Address" };
+        model = new DefaultTableModel(columns, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(model);
+        Theme.applyTableStyling(table);
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        btnSearch.addActionListener(e -> {
+            String query = searchField.getText();
+            if (query.trim().length() == 0 || query.equals("Search by Name...")) {
+                sorter.setRowFilter(null);
+            } else {
+                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Buttons Panel
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        btnPanel.setBackground(Theme.BG_COLOR);
+
+        JButton btnViewDetails = Theme.createButton("View Details", Theme.INFO);
+        btnViewDetails.setPreferredSize(new Dimension(140, 35));
+
+        JButton btnAdd = Theme.createGradientButton("Add Patient"); // Gradient for primary action
+        btnAdd.setPreferredSize(new Dimension(140, 35));
+
+        JButton btnEdit = Theme.createButton("Edit", Theme.WARNING);
+        btnEdit.setPreferredSize(new Dimension(100, 35));
+
+        JButton btnDelete = Theme.createButton("Delete", Theme.DANGER);
+        btnDelete.setPreferredSize(new Dimension(100, 35));
+
+        JButton btnRefresh = Theme.createButton("Refresh", Theme.INFO);
+        btnRefresh.setPreferredSize(new Dimension(100, 35));
+
+        btnPanel.add(btnViewDetails);
+        btnPanel.add(btnAdd);
+        btnPanel.add(btnEdit);
+        btnPanel.add(btnDelete);
+        btnPanel.add(btnRefresh);
+        add(btnPanel, BorderLayout.SOUTH);
+
+        // Actions
+        btnViewDetails.addActionListener(e -> viewSelectedPatientDetails());
         btnRefresh.addActionListener(e -> loadPatients());
+
+        btnAdd.addActionListener(e -> {
+            CardLayout cl = (CardLayout) getParent().getLayout();
+            cl.show(getParent(), "AddPatient");
+        });
+
         btnEdit.addActionListener(e -> editSelectedPatient());
-        btnAdd.addActionListener(e -> addPatient());
         btnDelete.addActionListener(e -> deleteSelectedPatient());
 
-        loadPatients(); // initial load
-    }
-
-    private void loadPatients() {
-        model.setRowCount(0);
-        ResultSet rs = PatientController.getAllPatients();
-        try {
-            while (rs != null && rs.next()) {
-                model.addRow(new Object[]{
-                        rs.getInt("patient_id"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("gender"),
-                        rs.getDate("d_o_b"),
-                        rs.getString("blood_group"),
-                        rs.getString("phone_num"),
-                        rs.getString("email"),
-                        rs.getString("address")
-                });
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading patients!");
+        if (!java.beans.Beans.isDesignTime()) {
+            loadPatients();
         }
     }
 
+    public void loadPatients() {
+        model.setRowCount(0);
+        List<Patient> list = PatientController.getAllPatients();
+        for (Patient p : list) {
+            model.addRow(new Object[] {
+                    p.getId(),
+                    p.getFirstName(),
+                    p.getLastName(),
+                    p.getGender(),
+                    p.getDob(),
+                    p.getBloodGroup(),
+                    p.getPhone(),
+                    p.getEmail(),
+                    p.getAddress()
+            });
+        }
+    }
+
+    private void viewSelectedPatientDetails() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a patient to view!");
+            return;
+        }
+
+        int id = (int) model.getValueAt(selectedRow, 0);
+        dashboard.showPatientDetails(id);
+    }
+
     private void editSelectedPatient() {
-        int selectedRow = patientTable.getSelectedRow();
+        int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a patient to edit!");
             return;
@@ -94,16 +170,9 @@ public class ManagePatientsPanel extends JPanel {
         // Open the EditPatientPanel with this data
         dashboard.showEditPatientPanel(id, firstName, lastName, gender, dob, blood, phone, email, address);
     }
-    private void addPatient() {
-        // This is where you handle the "Add" button logic.
-        // For now, let's just open the AddPatient form through the Dashboard.
-        dashboard.switchPanel("AddPatient");
-    }
-
-    
 
     private void deleteSelectedPatient() {
-        int selectedRow = patientTable.getSelectedRow();
+        int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a patient to delete!");
             return;
