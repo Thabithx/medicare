@@ -18,8 +18,6 @@
     <a href="#key-features"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="#demo">View Demo</a>
-    ·
     <a href="#issues">Report Bug</a>
     ·
     <a href="#issues">Request Feature</a>
