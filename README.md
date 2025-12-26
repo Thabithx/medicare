@@ -47,16 +47,12 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
 ## About The Project
 
-Medicare is not just another hospital management software; it's a comprehensive ecosystem designed to handle the high-stakes environment of a modern hospital with the elegance and fluidity of a modern desktop OS.
-
-I bypassed standard Java Swing constraints to engineer a **Smart UI Engine** with custom 2D drawing logic, resulting in a visually stunning and highly responsive interface. Under the hood, optimized SQL queries ensure that complex data relationships—from patient history to financial analytics—are processed without a millisecond of lag.
+Medicare is not just another hospital management software, it's a high-performance medical ecosystem built to transform the way hospitals operate. It is designed to handle the high-stakes environment of a modern hospital with the elegance of a modern desktop OS.
 
 ### Built With
 
@@ -72,7 +68,7 @@ I bypassed standard Java Swing constraints to engineer a **Smart UI Engine** wit
 ### 🖥️ Smart UI Engine
 Custom-built rendering engine that delivers a modern, fluid user experience, breaking away from the traditional, rigid look of standard Java applications.
 
-### 🔒 Role-Based Access Control (RBAC)
+### 🔒 Role-Based Access Control
 Secure session management ensuring that each actor (Admin, Doctor, Receptionist) accesses only the data and features relevant to their role.
 
 ### ⏱️ Time Analytics & Reporting
@@ -125,8 +121,6 @@ Follow these steps to get a local copy up and running.
 2.  **Dashboard:** Navigate through the dashboard to manage doctors, patients, and appointments.
 3.  **Appointments:** Receptionists can book slots; Doctors can approve/reject them.
 4.  **Reports:** View detailed analytics on the admin panel.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
