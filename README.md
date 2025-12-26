@@ -1,7 +1,5 @@
 # Medicare Hospital Management System
 
-![Medicare Banner](https://via.placeholder.com/1200x300.png?text=Medicare+Hospital+Management+System)
-
 <div align="center">
 
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
