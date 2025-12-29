@@ -63,25 +63,25 @@ Medicare is not just another hospital management software, it's a high-performan
 
 ## Key Features
 
-### 🖥️ Smart UI Engine
+### Smart UI Engine
 Custom-built rendering engine that delivers a modern, fluid user experience, breaking away from the traditional, rigid look of standard Java applications.
 
-### 🔒 Role-Based Access Control
+### Role-Based Access Control
 Secure session management ensuring that each actor (Admin, Doctor, Receptionist) accesses only the data and features relevant to their role.
 
-### ⏱️ Time Analytics & Reporting
+### Time Analytics & Reporting
 Built-in reporting tools that calculate doctor efficiency and hospital revenue in real-time. The optimized SQL layer handles massive datasets effortlessly.
 
-### 🏥 Medical Command Center
+### Medical Command Center
 A unified dashboard for hospital administrators to track clinical performance, financial health, and operational metrics at a glance.
 
-### 🩺 Doctor’s Clinical Suite
+### Doctor’s Clinical Suite
 A radical new workflow for doctors to manage schedules, approve appointments, and view deep patient histories with a single click.
 
-### 🔔 Centralized Notifications
+### Centralized Notifications
 An intelligent alert system that ensures critical patient updates and appointment requests are never overlooked.
 
-### 📂 The Patient Profile
+### The Patient Profile
 A beautiful, deep medical ledger that tracks allergies, chronic conditions, and medical history in an easy-to-read format.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
